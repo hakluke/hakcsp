@@ -15,7 +15,6 @@ func main() {
 	concurrencyPtr := flag.Int("t", 8, "Number of threads to utilise. Default is 8.")
 	flag.Parse()
 
-	numWorkers := *concurrencyPtr
 	work := make(chan string)
 	go func() {
 		s := bufio.NewScanner(os.Stdin)
@@ -27,7 +26,7 @@ func main() {
 
 	wg := &sync.WaitGroup{}
 
-	for i := 0; i < numWorkers; i++ {
+	for i := 0; i < *concurrencyPtr; i++ {
 		wg.Add(1)
 		go doWork(work, wg)
 	}
@@ -44,7 +43,7 @@ func doWork(work chan string, wg *sync.WaitGroup) {
 		}
 		value := resp.Header.Get("Content-Security-Policy")
 		for _, s := range strings.Split(value, " ") {
-			if strings.HasPrefix(s, "http") {
+			if strings.Contains(s, ".") { // weird way to check if it's a domain, unsure if this will work in all situations
 				fmt.Println(s)
 			}
 		}
