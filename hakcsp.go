@@ -40,6 +40,7 @@ func doWork(work chan string, wg *sync.WaitGroup) {
 		resp, err := http.Get(url)
 		if err != nil {
 			log.Println("Error fetching url:", err)
+			continue
 		}
 		value := resp.Header.Get("Content-Security-Policy")
 		for _, s := range strings.Split(value, " ") {
